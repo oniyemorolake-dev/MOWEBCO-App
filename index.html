@@ -2,22 +2,24 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#6b3fa0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
 <title>MO-WEBCO CRM</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500&family=Cormorant+Garamond:wght@400;600&display=swap" rel="stylesheet">
 <style>
 :root{--l:#c8a8e9;--ll:#ecdff7;--lm:#9b6fc4;--ld:#6b3fa0;--cr:#faf7fd;--w:#fff;--t:#2a1a3e;--tm:#5a4570;--tl:#9980b0;}
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
-html,body{height:100%;background:#1a1a2e;display:flex;justify-content:center;align-items:center;font-family:'DM Sans',sans-serif;}
-.app{width:100%;max-width:390px;height:100vh;max-height:844px;background:var(--cr);display:flex;flex-direction:column;overflow:hidden;position:relative;}
-@media(min-width:430px){.app{border-radius:40px;box-shadow:0 30px 80px rgba(0,0,0,0.5);}}
-.hdr{background:var(--w);padding:16px 20px 12px;border-bottom:0.5px solid rgba(200,168,233,0.3);flex-shrink:0;}
+html,body{width:100%;height:100%;overflow:hidden;background:var(--cr);font-family:'DM Sans',sans-serif;}
+.app{width:100vw;height:100dvh;min-height:100vh;background:var(--cr);display:flex;flex-direction:column;overflow:hidden;position:relative;}
+.hdr{background:var(--w);padding:calc(16px + env(safe-area-inset-top)) 20px 12px;border-bottom:0.5px solid rgba(200,168,233,0.3);flex-shrink:0;}
 .hdr-row{display:flex;align-items:center;justify-content:space-between;}
 .logo{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:600;color:var(--ld);}
 .hdr-sub{font-size:11px;color:var(--tl);margin-top:2px;}
 .hdr-badge{background:var(--ll);color:var(--ld);font-size:10px;font-weight:500;padding:4px 10px;border-radius:20px;}
 .body{flex:1;overflow-y:auto;padding:16px;-webkit-overflow-scrolling:touch;}
-.bnav{background:var(--w);border-top:0.5px solid rgba(200,168,233,0.3);display:flex;flex-shrink:0;}
+.bnav{background:var(--w);border-top:0.5px solid rgba(200,168,233,0.3);display:flex;flex-shrink:0;padding-bottom:env(safe-area-inset-bottom);}
 .ni{flex:1;padding:12px 4px 10px;text-align:center;cursor:pointer;}
 .ni-icon{font-size:20px;display:block;}
 .ni-label{font-size:9px;color:var(--tl);margin-top:3px;display:block;}
