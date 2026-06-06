@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>MO-WEBCO Call Scripts</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500&family=Cormorant+Garamond:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{--l:#c8a8e9;--ll:#ecdff7;--lm:#9b6fc4;--ld:#6b3fa0;--cr:#faf7fd;--w:#fff;--t:#2a1a3e;--tm:#5a4570;--tl:#9980b0;}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html,body{height:100%;background:#1a1a2e;display:flex;justify-content:center;align-items:center;font-family:'DM Sans',sans-serif;}
+.app{width:100%;max-width:390px;height:100vh;max-height:844px;background:var(--cr);display:flex;flex-direction:column;overflow:hidden;position:relative;}
+@media(min-width:430px){.app{border-radius:40px;box-shadow:0 30px 80px rgba(0,0,0,0.5);}}
+.hdr{background:var(--w);padding:16px 20px 12px;border-bottom:0.5px solid rgba(200,168,233,0.3);flex-shrink:0;}
+.hdr-row{display:flex;align-items:center;justify-content:space-between;}
+.logo{font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:600;color:var(--ld);}
+.hdr-sub{font-size:11px;color:var(--tl);margin-top:2px;}
+.progress{font-size:11px;color:var(--ld);font-weight:500;}
+.body{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;}
+
+/* LIST VIEW */
+.list-view{padding:16px;}
+.search{width:100%;padding:10px 14px;border:1.5px solid rgba(200,168,233,0.3);border-radius:12px;font-family:'DM Sans',sans-serif;font-size:13px;color:var(--t);background:var(--w);outline:none;margin-bottom:12px;}
+.filter-row{display:flex;gap:6px;overflow-x:auto;margin-bottom:12px;padding-bottom:2px;}
+.filter-row::-webkit-scrollbar{display:none;}
+.chip{padding:5px 12px;border-radius:20px;border:1px solid rgba(200,168,233,0.3);background:transparent;font-family:'DM Sans',sans-serif;font-size:11px;color:var(--tm);cursor:pointer;white-space:nowrap;}
+.chip.on{background:var(--ld);color:#fff;border-color:var(--ld);}
+.salon-card{background:var(--w);border-radius:14px;padding:14px;border:0.5px solid rgba(200,168,233,0.2);margin-bottom:8px;cursor:pointer;transition:transform 0.15s;}
+.salon-card:active{transform:scale(0.98);}
+.salon-card-top{display:flex;justify-content:space-between;align-items:flex-start;}
+.salon-name{font-size:14px;font-weight:500;color:var(--t);}
+.salon-type{font-size:10px;color:var(--tl);margin-top:2px;}
+.salon-contact{font-size:11px;color:var(--tl);margin-top:6px;}
+.badge{font-size:10px;font-weight:500;padding:3px 8px;border-radius:20px;white-space:nowrap;flex-shrink:0;}
+.b-pending{background:#f1efe8;color:#444441;}
+.b-interested{background:#eaf3de;color:#27500a;}
+.b-callback{background:#faeeda;color:#633806;}
+.b-nope{background:#fcebeb;color:#791f1f;}
+.b-called{background:#eeedfe;color:#3c3489;}
+
+/* SCRIPT VIEW */
+.script-view{display:none;padding:0;}
+.script-hdr{background:var(--ld);padding:20px;color:white;}
+.script-salon{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:600;margin-bottom:2px;}
+.script-type{font-size:12px;opacity:0.75;}
+.script-contact{font-size:12px;opacity:0.9;margin-top:8px;background:rgba(255,255,255,0.15);padding:8px 12px;border-radius:10px;}
+.script-body{padding:16px;display:flex;flex-direction:column;gap:12px;}
+.script-section{background:var(--w);border-radius:14px;border:0.5px solid rgba(200,168,233,0.2);overflow:hidden;}
+.script-section-hdr{background:var(--ll);padding:10px 14px;font-size:10px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:var(--ld);}
+.script-section-body{padding:14px;}
+.script-line{font-size:14px;color:var(--t);line-height:1.7;background:rgba(200,168,233,0.08);border-radius:10px;padding:12px;border-left:3px solid var(--lm);margin-bottom:8px;}
+.script-note{font-size:12px;color:var(--tl);font-style:italic;line-height:1.6;margin-top:6px;}
+.objection{margin-bottom:10px;padding-bottom:10px;border-bottom:0.5px solid rgba(200,168,233,0.2);}
+.objection:last-child{border-bottom:none;margin-bottom:0;padding-bottom:0;}
+.obj-q{font-size:13px;font-weight:500;color:var(--t);margin-bottom:4px;}
+.obj-a{font-size:13px;color:var(--tm);line-height:1.6;font-weight:300;}
+.status-bar{padding:12px 16px;background:var(--w);border-top:0.5px solid rgba(200,168,233,0.2);display:flex;gap:6px;flex-shrink:0;}
+.s-btn{flex:1;padding:10px 6px;border-radius:20px;border:none;font-family:'DM Sans',sans-serif;font-size:11px;font-weight:500;cursor:pointer;}
+.s-interested{background:#eaf3de;color:#27500a;}
+.s-callback{background:#faeeda;color:#633806;}
+.s-nope{background:#fcebeb;color:#791f1f;}
+.back-btn{background:rgba(255,255,255,0.2);color:white;border:none;padding:6px 14px;border-radius:20px;font-family:'DM Sans',sans-serif;font-size:12px;cursor:pointer;}
+
+.toast{position:absolute;top:80px;left:50%;transform:translateX(-50%);background:var(--t);color:#fff;padding:10px 20px;border-radius:20px;font-size:13px;z-index:100;opacity:0;transition:opacity 0.3s;pointer-events:none;white-space:nowrap;}
+.toast.show{opacity:1;}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="hdr">
+    <div class="hdr-row">
+      <div><div class="logo">MO-WEBCO 🦋</div><div class="hdr-sub" id="hdrSub">Call scripts · 19 salons</div></div>
+      <div class="progress" id="progressEl">0/19 called</div>
+    </div>
+  </div>
+
+  <div class="body" id="appBody">
+    <div class="list-view" id="listView">
+      <input class="search" id="srch" type="text" placeholder="Search salons..." oninput="renderList()">
+      <div class="filter-row" id="filterRow"></div>
+      <div id="salonList"></div>
+    </div>
+
+    <div class="script-view" id="scriptView">
+      <div class="script-hdr">
+        <button class="back-btn" onclick="goBack()">← Back</button>
+        <div class="script-salon" id="sv-name" style="margin-top:12px;"></div>
+        <div class="script-type" id="sv-type"></div>
+        <div class="script-contact" id="sv-contact"></div>
+      </div>
+      <div class="script-body" id="sv-body"></div>
+      <div class="status-bar">
+        <button class="s-btn s-interested" onclick="setStatus('interested')">✓ Interested</button>
+        <button class="s-btn s-callback" onclick="setStatus('callback')">↺ Call back</button>
+        <button class="s-btn s-nope" onclick="setStatus('nope')">✕ Not interested</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+</div>
+
+<script>
+var salons = [
+  {
+    id:1, name:'Hair Lab Calgary', type:'Hair Salon', status:'pending',
+    email:'info@hairlabcalgary.com', phone:'N/A — email only', platform:'Wix',
+    owner:'the owner',
+    opening:"Hi there! My name is [Your Name] and I'm calling on behalf of MO-WEBCO, a local Calgary web design company. Is the owner or manager available for two quick minutes?",
+    pitch:"I visited Hair Lab Calgary's website before calling and I noticed it's built on Wix — which is totally fine to start with, but it loads quite slowly on mobile and there's no online booking system. In 2026 most clients want to book instantly on their phone, and if they can't they just move on to the next salon.",
+    offer:"Morolake builds clean, custom websites for Calgary salons starting from $400 — one time fee, delivered in 7 days, fully mobile friendly with a proper booking form. She's already built a few for local Calgary salons if you'd like to see them.",
+    close:"Would it be okay if she sent you a link to her portfolio and a free quote by email? No obligation at all.",
+    objections:[
+      {q:"We already have a website", a:"I know — I visited it before calling! That's actually why I'm reaching out. I think it could be doing a lot more for you in terms of getting bookings online."},
+      {q:"We're happy with Wix", a:"Totally understandable! The difference with a custom site is it loads much faster on mobile and you own it completely — no monthly Wix fees. Would you be open to seeing a comparison?"},
+      {q:"We can't afford it right now", a:"She starts from $400 and splits it 50/50 so you only pay $200 upfront to get started. Would that work better?"}
+    ]
+  },
+  {
+    id:2, name:'Notorious Hair Group', type:'Hair Salon', status:'pending',
+    email:'info@notorioushair.ca', phone:'N/A — email only', platform:'Custom',
+    owner:'Josh',
+    opening:"Hi there! Could I speak with Josh please? My name is [Your Name] and I'm calling on behalf of MO-WEBCO, a local Calgary web design company. I have a quick question about the Notorious Hair Group website.",
+    pitch:"Hi Josh! So I visited your website and noticed your contact form is actually broken — it literally says on the page 'our form is being weird, please call us instead.' That means every person who visits your site and tries to reach you online just leaves. For a top rated Calgary salon that's probably costing you real bookings every single day.",
+    offer:"Morolake at MO-WEBCO fixes exactly this kind of thing — she builds fast, clean, custom websites for Calgary salons starting from $400, delivered in 7 days. She'd love to fix the form and give the whole site a proper refresh while she's at it.",
+    close:"Would it be okay if she sent over her portfolio and a free quote? Takes 30 seconds to look at and no obligation at all.",
+    objections:[
+      {q:"We know about the form, we're getting it fixed", a:"That's great! While it's being looked at, would you be open to seeing what a fully custom redesign could look like? Morolake can often do it faster and cheaper than most developers."},
+      {q:"We have a developer already", a:"Of course! If you ever need a second opinion or a faster turnaround, Morolake is based right here in Calgary and very affordable. Can I send her details just in case?"},
+      {q:"How much does it cost", a:"She starts from $400 for a full custom site — split 50/50 so only $200 upfront. For just fixing the form and a quick refresh it would be even less. Want her to send a proper quote?"}
+    ]
+  },
+  {
+    id:3, name:'Salon Luminous', type:'Hair Salon', status:'pending',
+    email:'salonluminous@outlook.com', phone:'403.685.0929', platform:'Wix',
+    owner:'Missy',
+    opening:"Hi! Could I speak with Missy please? My name is [Your Name] calling on behalf of MO-WEBCO, a local Calgary web design company. I just have a quick question about the Salon Luminous website.",
+    pitch:"Hi Missy! So I visited the Salon Luminous website and I noticed it was last properly updated back in 2019 — which is actually around when you won your best salon ambiance award! Your salon has clearly grown and evolved since then but the website doesn't really reflect that. In 2026 most clients check your site before booking, and a 7 year old website can really put people off.",
+    offer:"Morolake builds fresh, modern, custom websites for Calgary salons starting from $400 — one time fee, delivered in 7 days. She can make your online presence match the actual quality of your salon.",
+    close:"Could she send you a link to her work and a free quote? No pressure at all — just so you can see what's possible.",
+    objections:[
+      {q:"The website works fine for us", a:"That's great that it's working! The thing is with a site from 2019 it's likely loading very slowly on modern phones which can push people away before they even see your services. A fresh site could actually bring in more walk-in bookings."},
+      {q:"We don't have budget for that right now", a:"She starts from $400 split into two payments of $200 — so it's very manageable. And a better website usually pays for itself in just a few extra bookings. Would you like her to send a quote?"}
+    ]
+  },
+  {
+    id:4, name:'Jassz Cuts Hair Studio', type:'Hair Salon', status:'pending',
+    email:'jasszcuts@gmail.com', phone:'N/A — email only', platform:'Wix',
+    owner:'Jaswant',
+    opening:"Hi! Is Jaswant available please? My name is [Your Name] and I'm calling from MO-WEBCO, a local Calgary web design company. I have a quick question about the Jassz Cuts website.",
+    pitch:"Hi Jaswant! So I visited the Jassz Cuts website and noticed a few things that are quietly hurting you online. Your Facebook, Twitter and LinkedIn links all go to Wix's own pages instead of your actual salon — so anyone who tries to follow you on social media from your website ends up on Wix's profile not yours. There's also no pricing listed which means potential clients leave to find a salon that shows prices upfront.",
+    offer:"Morolake fixes all of this — she builds custom websites for Calgary salons starting from $400, 7 days delivery, fully mobile friendly with proper working social links and a pricing page.",
+    close:"Can she send over a free quote and her portfolio link? Takes 30 seconds to look at.",
+    objections:[
+      {q:"We didn't know about the social links", a:"It happens a lot with Wix sites! It's a quick fix but it's worth doing properly. Morolake can sort it all out as part of a full site refresh — want her to put together a quote?"},
+      {q:"How much is it", a:"Starts from $400 for a full custom site, split 50/50. Just $200 upfront to get started. She can have a new site live in 7 days."}
+    ]
+  },
+  {
+    id:5, name:'Creations By Chelsey', type:'Hair Salon', status:'pending',
+    email:'Chelsey@CreationsByChelsey.ca', phone:'N/A — email only', platform:'Wix',
+    owner:'Chelsey',
+    opening:"Hi! Is Chelsey available please? My name is [Your Name] calling from MO-WEBCO, a local Calgary web design company. I just had a quick look at the Creations By Chelsey website and wanted to reach out.",
+    pitch:"Hi Chelsey! Your salon is clearly positioned at the luxury end — colour specialist, balayage, Kensington location. Really impressive. But your website is built on Wix and honestly it doesn't match that luxury positioning at all. It's a bit like serving champagne in a plastic cup — the product is great but the presentation doesn't do it justice.",
+    offer:"Morolake builds premium custom websites for Calgary salons starting from $400 — the kind of site that actually matches a high end salon like yours. Delivered in 7 days, fully mobile, looks completely bespoke.",
+    close:"Would she be able to send you her portfolio and a free quote by email? No obligation whatsoever.",
+    objections:[
+      {q:"I built the Wix site myself", a:"That's actually impressive! The thing is as your salon grows and your brand gets more premium, a custom site really sets you apart from the competition. Morolake can build on what you've already established — just elevate it significantly."},
+      {q:"I'm happy with how it looks", a:"That's great! The design is one thing — the main issue with Wix is load speed on mobile and SEO. A custom site would load faster and show up better on Google. Want Morolake to send a quick comparison?"}
+    ]
+  },
+  {
+    id:6, name:'Painted Pretty Hair Lounge', type:'Hair Salon', status:'pending',
+    email:'Instagram DM only', phone:'N/A', platform:'Wix',
+    owner:'the owner',
+    opening:"Hi! My name is [Your Name] and I'm reaching out on behalf of MO-WEBCO, a Calgary web design company. I visited the Painted Pretty Hair Lounge website and noticed something I wanted to flag — do you have two minutes?",
+    pitch:"So the website title actually still says HOME | Mysite — that's the default Wix title that was never changed. Which means when people search for your salon on Google, it shows up as 'Mysite' instead of Painted Pretty Hair Lounge. Your social media links on the site also go to Wix's own pages instead of your Instagram. So all that traffic from people clicking your links is going to Wix, not you.",
+    offer:"Morolake fixes all of this — custom websites for Calgary salons from $400, delivered in 7 days. Proper Google presence, working social links, mobile friendly.",
+    close:"Can she send a free quote and portfolio link?",
+    objections:[
+      {q:"Oh I didn't know that", a:"It's really common with Wix! The good news is Morolake can fix all of it and build you a proper site that actually shows your salon's name on Google. Want her to send a quote?"},
+      {q:"How much would it cost", a:"Starts from $400, split into two payments of $200. She can have it done in 7 days."}
+    ]
+  },
+  {
+    id:7, name:'Whimsical Riot', type:'Hair Salon', status:'pending',
+    email:'info@whimsicalriot.com', phone:'N/A — email only', platform:'Custom (basic)',
+    owner:'the owner',
+    opening:"Hi! My name is [Your Name] calling from MO-WEBCO, a local Calgary web design company. Is the owner available for two quick minutes? I visited the Whimsical Riot website and had some thoughts.",
+    pitch:"I love the name and the vibe of Whimsical Riot — it's such a fun, creative brand. But the website is quite basic — there's no online booking system, it doesn't look great on mobile, and it doesn't really capture the energy of the salon itself. Your brand has real personality and your website should show that.",
+    offer:"Morolake builds custom websites that actually match the feel of a salon — fun, colourful, on brand. Starting from $400, delivered in 7 days, with a proper booking form so clients can reach you 24/7.",
+    close:"Can she send her portfolio and a free quote? You'd be able to see exactly what she'd do for Whimsical Riot.",
+    objections:[
+      {q:"We're happy with our current site", a:"That's great! The main thing missing is an online booking form — that alone can significantly increase your bookings from people who find you outside of business hours. Would that be worth a conversation?"},
+      {q:"We're not looking to spend right now", a:"Totally understand! She starts from $400 split into two $200 payments. Would it help if she sent a quote so you have it on hand for when the time is right?"}
+    ]
+  },
+  {
+    id:8, name:'Revival Hair Salon', type:'Hair Salon', status:'pending',
+    email:'Emily@revivalhairsalon.ca', phone:'N/A — email only', platform:'Squarespace',
+    owner:'Emily',
+    opening:"Hi! Is Emily available please? My name is [Your Name] from MO-WEBCO, a local Calgary web design company. I visited the Revival Hair Salon website and wanted to reach out.",
+    pitch:"Hi Emily! I love what you're doing with Revival — an indigenous owned business specialising in curly hair, six years of experience, loyal clients since 2019. That's a really special story. But your website isn't telling that story very well right now — the images aren't loading, there's no gallery showing your work, and no pricing listed. For someone whose work clearly speaks for itself, the website should be showing that off loudly.",
+    offer:"Morolake builds beautiful custom websites for Calgary salons starting from $400 — she can create something that actually tells your story and showcases your curly hair work properly. Delivered in 7 days.",
+    close:"Would she be able to send you a free quote and her portfolio by email?",
+    objections:[
+      {q:"I know the images aren't working, I've been meaning to fix it", a:"It's one of those things that's easy to put off! Morolake can fix all of it and rebuild the whole site properly while she's at it — for a very reasonable price. Want her to send a quote?"},
+      {q:"I can't afford a new website right now", a:"She starts from $400 split into two payments — just $200 to get started. And honestly for a salon specialising in curly hair there's real demand online for that — a good website could bring you a lot more clients."}
+    ]
+  },
+  {
+    id:9, name:'1st Street Barbershop', type:'Barbershop', status:'pending',
+    email:'ghorban1976@yahoo.com', phone:'N/A — email only', platform:'GoDaddy',
+    owner:'the owner',
+    opening:"Hi! My name is [Your Name] calling from MO-WEBCO, a local Calgary web design company. Is the owner available for two quick minutes? I had a look at the 1st Street Barbershop website and wanted to flag something.",
+    pitch:"So you're a luxury barbershop right in the heart of downtown Calgary — premium location, premium service. But your website is built on GoDaddy Website Builder and it's very basic — no services listed, no pricing, no photos of the shop. For a downtown Calgary business competing for walk-ins and Google searches every single day, your website should be your best salesman. Right now it's not doing much.",
+    offer:"Morolake builds custom websites for Calgary small businesses starting from $400 — delivered in 7 days, fully mobile, with your services, pricing and photos showing properly. Something that actually does your shop justice.",
+    close:"Can she send you a portfolio link and free quote by email?",
+    objections:[
+      {q:"We get most clients through word of mouth", a:"That's amazing — word of mouth is the best! But most of those referrals will Google you before they come in. If they land on a basic GoDaddy site with no info they might second guess the booking. A good site just confirms what they already heard about you."},
+      {q:"How much is it", a:"Starts from $400 split into two $200 payments. For a downtown Calgary business that's less than a day's revenue and it works for you 24/7."}
+    ]
+  },
+  {
+    id:10, name:'Boho Hair Boutique', type:'Hair Salon', status:'pending',
+    email:'sarah@bohohairboutique.com', phone:'N/A — email only', platform:'GoDaddy',
+    owner:'Sarah',
+    opening:"Hi! Is Sarah available please? My name is [Your Name] from MO-WEBCO, a local Calgary web design company. I visited the Boho Hair Boutique website and wanted to reach out.",
+    pitch:"Hi Sarah! The Boho brand is gorgeous — lived-in blondes, Japanese Head Spa, luxury Mission location. You've really built something special. But the website is on GoDaddy Website Builder and it doesn't match the luxury experience you're delivering at all. It's a bit like serving champagne in a plastic cup — everything inside is premium but the first impression online isn't.",
+    offer:"Morolake builds premium custom websites for Calgary salons starting from $400 — something that actually looks as beautiful as your salon feels. Delivered in 7 days, fully mobile friendly.",
+    close:"Can she send her portfolio and a free quote by email? No pressure at all.",
+    objections:[
+      {q:"GoDaddy was fine to start with", a:"Completely! It gets you online quickly which is great. But as your brand becomes more premium, your website should too. A custom site would really elevate Boho to match the level you're working at."},
+      {q:"I'm not looking to spend right now", a:"She starts from $400 split 50/50 — just $200 upfront. And for a luxury salon a better website typically pays for itself in just a couple of extra bookings. Worth a look at least?"}
+    ]
+  },
+  {
+    id:11, name:'Venna Hair', type:'Hair Salon', status:'pending',
+    email:'Vennahair@gmail.com', phone:'N/A — email only', platform:'Custom',
+    owner:'the owner',
+    opening:"Hi! My name is [Your Name] from MO-WEBCO, a Calgary web design company. Is the owner in? I visited the Venna Hair website and noticed something that's probably hurting your Google visibility.",
+    pitch:"So Venna Hair has a great range — cuts, colour, extensions, a full shop, even hair courses. Really impressive. But your website title just says 'Home' instead of 'Venna Hair Calgary'. That means Google doesn't know what your site is about and you're probably not showing up when people in Calgary search for hair salons. That's potential clients going to competitors every single day.",
+    offer:"Morolake fixes this and rebuilds your site properly — custom websites starting from $400, 7 days delivery, fully SEO optimised so you actually show up on Google when people search for hair salons in Calgary.",
+    close:"Can she send a free quote and portfolio link by email?",
+    objections:[
+      {q:"We didn't realise that was an issue", a:"It's a really common thing! The good news is it's completely fixable. Morolake can rebuild the site properly and get you showing up on Google. Want her to send a quote?"},
+      {q:"We have someone managing the site", a:"Good to know! If you ever want a second opinion or a fresh approach, Morolake is very affordable and fast. Can she send her details just in case?"}
+    ]
+  },
+  {
+    id:12, name:'San Juan Hair Salon & Spa', type:'Hair & Spa', status:'pending',
+    email:'No email — call only', phone:'403-455-9884', platform:'Weebly (free!)',
+    owner:'the owner',
+    opening:"Hi! My name is [Your Name] and I'm calling from MO-WEBCO, a local Calgary web design company. Is the owner available for two quick minutes? I had a look at the San Juan Hair Salon website and I noticed a few things I wanted to flag.",
+    pitch:"So I visited your website and I have to be honest — it's quietly hurting your business in a few ways. The site title still says 'MY SITE' instead of San Juan Hair Salon — so Google doesn't know who you are. It's still on a free Weebly address instead of a real domain. And your grand opening promotions from 2020 are still showing — so new visitors might not even know you're still open. For a full service salon at Market Mall that's been going for 5 years, you deserve so much better than this.",
+    offer:"Morolake builds proper custom websites for Calgary salons starting from $400 — a real domain, your actual business name showing on Google, and a site that tells people you're open, established and ready for bookings. Delivered in 7 days.",
+    close:"Can she call you back or send a quote by email? What would work best for you?",
+    objections:[
+      {q:"We've had that website for years", a:"I know! And it's served you to this point which is great. But in 2026 that website is actually losing you clients who can't find you properly on Google. A fresh start would make a real difference."},
+      {q:"How much does it cost", a:"Starts from $400 split into two $200 payments. For a Market Mall business that's very manageable and it would immediately improve how you show up online."}
+    ]
+  },
+  {
+    id:13, name:'M88 Nail & Spa', type:'Nail Salon', status:'pending',
+    email:'mandynguyen0881@gmail.com', phone:'N/A — email only', platform:'Wix',
+    owner:'Mandy',
+    opening:"Hi! Is Mandy available please? My name is [Your Name] from MO-WEBCO, a Calgary web design company. I visited the M88 Nail and Spa website and noticed something I wanted to flag.",
+    pitch:"Hi Mandy! 20 years of experience — that's incredible and it really shows in your work. But I noticed something on your website that caught my eye — the footer says copyright 2035 by The Nail Lab. That's the wrong year and the wrong business name! It's a small thing but potential clients do notice details like that, and it quietly undermines the 20 years of professionalism you've built. Your Wix site is also loading slowly on mobile which can push clients away before they even see your work.",
+    offer:"Morolake builds custom websites for Calgary nail salons starting from $400 — something that actually reflects 20 years of expertise. Delivered in 7 days, fully mobile friendly, with your correct business name everywhere.",
+    close:"Can she send a free quote and portfolio link to your email?",
+    objections:[
+      {q:"Oh I didn't notice that!", a:"It happens! Wix sites can be tricky to maintain. Morolake can fix all of it and rebuild the whole thing properly while she's at it — want her to send a quote?"},
+      {q:"We can't afford a new website", a:"She starts from $400 split into two $200 payments. For a 20 year business that's very reasonable and it would finally give your online presence the professionalism your work deserves."}
+    ]
+  },
+  {
+    id:14, name:'NOW Nails and Spa', type:'Nail Salon', status:'pending',
+    email:'Find on Instagram first', phone:'Find on Instagram', platform:'Dash Booking',
+    owner:'the owner',
+    opening:"Hi! My name is [Your Name] from MO-WEBCO, a Calgary web design company. I visited the NOW Nails and Spa website and noticed some urgent issues I wanted to flag — do you have two quick minutes?",
+    pitch:"So I visited your website and I have to be straight with you — it has some serious problems. The homepage actually says 'CINDY NAILS' not NOW Nails and Spa — a completely different business name. Your phone number shows as 073 123 1212 which is a fake placeholder number that was never updated. And your contact section is completely blank. Anyone who visits your site right now literally cannot contact you. That's bookings walking straight out the door every single day.",
+    offer:"Morolake fixes all of this — custom websites for Calgary nail salons from $400, your correct name, real phone number, working contact form, delivered in 7 days.",
+    close:"Can she send a free quote by email or DM?",
+    objections:[
+      {q:"We didn't realise the site had those issues", a:"It's unfortunately very common with template sites! The good news is Morolake can start fresh and build something properly from scratch. Want her to send a quote?"},
+      {q:"How much is it", a:"Starts from $400 split 50/50 — just $200 upfront. Given how many clients you're probably losing right now from a broken site it would pay for itself very quickly."}
+    ]
+  },
+  {
+    id:15, name:'Tiffany Nails and Spa', type:'Nail Salon', status:'pending',
+    email:'booking@tiffanyspa.ca', phone:'N/A — email only', platform:'WordPress (built 2013)',
+    owner:'the owner',
+    opening:"Hi! My name is [Your Name] from MO-WEBCO, a local Calgary web design company. Is the owner available? I visited the Tiffany Nails and Spa website and wanted to reach out.",
+    pitch:"So Tiffany Nails and Spa is clearly one of Calgary's top nail salons — top 5 for pedicures, 7 years in Edgemont, loyal client base. That's genuinely impressive. But your website was built in 2013 — over 12 years ago. The newest client reviews on there are from 2016 and 2017, and the best in Calgary badge is from 2021. New clients visiting the site might think the business isn't active anymore. For a top 5 Calgary salon that's really not the impression you want to make.",
+    offer:"Morolake builds modern custom websites for Calgary nail salons starting from $400 — something that actually shows you're active, established and still one of the best in Calgary. Delivered in 7 days.",
+    close:"Can she send a free quote and portfolio link by email?",
+    objections:[
+      {q:"Our regular clients know us and still come back", a:"That's wonderful loyalty! But new clients searching for nail salons in Calgary are seeing a 12 year old website and might not book. A fresh site could bring in a whole new stream of clients on top of your loyal regulars."},
+      {q:"Updating a WordPress site is complicated", a:"That's exactly why Morolake just builds a brand new one from scratch — faster, cleaner, and you get a fresh start. Starts from $400 split into two $200 payments."}
+    ]
+  },
+  {
+    id:16, name:'Quoc Bao Nails and Spa', type:'Nail Salon', status:'pending',
+    email:'quocbaonailsspa@gmail.com', phone:'N/A — email only', platform:'Squarespace',
+    owner:'the owner',
+    opening:"Hi! My name is [Your Name] from MO-WEBCO, a Calgary web design company. Is the owner available for two minutes? I visited the Quoc Bao Nails and Spa website and had some thoughts.",
+    pitch:"I love the concept — nail art as proper works of art, creative designs, precision and hygiene. Really strong positioning for a salon that opened in 2025. But the website has a few things that are costing you clients already — no pricing listed anywhere so people leave to find a salon that shows costs upfront, your gallery page is actually labelled 'About Us' which confuses people, and your Instagram link goes to a location page instead of your profile.",
+    offer:"Morolake fixes all of this — she builds custom websites for Calgary nail salons from $400. For a salon that opened in 2025 this is the perfect time to set your online presence up properly from the start.",
+    close:"Can she send a free quote by email? No pressure at all.",
+    objections:[
+      {q:"We just opened so we're still getting set up", a:"Exactly — that's why now is the perfect time! It's much easier to set it up right from the beginning than to fix it later when you're busy. And she starts from just $400 split into two payments."},
+      {q:"We built the site ourselves", a:"That's impressive! The issues are really just small things — wrong labels, broken links, missing pricing. Morolake can fix all of it quickly and make the whole site work properly for you."}
+    ]
+  },
+  {
+    id:17, name:'Best Nails Studio', type:'Nail Salon', status:'pending',
+    email:'Instagram DM only', phone:'587-896-6688', platform:'Wix (free subdomain)',
+    owner:'the owner',
+    opening:"Hi! My name is [Your Name] calling from MO-WEBCO, a local Calgary web design company. Is the owner available? I visited the Best Nails Studio website and noticed some issues I wanted to flag.",
+    pitch:"So Best Nails Studio is still on a free Wix address — not a real domain. That means when people search for you on Google the address looks like a demo site and clients might not trust it. Your social media links on the site go to Wix's own Instagram and Facebook pages not yours. And your opening hours just say 'Please Contact' with no actual times listed. All of these things are quietly sending clients elsewhere.",
+    offer:"Morolake builds proper custom websites with a real domain for Calgary nail salons from $400 — working social links, proper hours, looks completely professional. Delivered in 7 days.",
+    close:"Can she send a free quote by email or can I get an email address for her to reach you on?",
+    objections:[
+      {q:"The free Wix site works for us", a:"It gets you online which is great! But a free Wix address can actually put clients off — it looks like a test site rather than a real business. A proper custom site with a real domain makes a huge difference to how people perceive you."},
+      {q:"How much is it", a:"Starts from $400 including a real domain, split into two $200 payments. Very manageable for what you get."}
+    ]
+  },
+  {
+    id:18, name:'Graceful Nails Beauty', type:'Nail Salon', status:'pending',
+    email:'Find on Instagram @graceful_nails_beauty', phone:'587-969-6790', platform:'GoDaddy',
+    owner:'the owner',
+    opening:"Hi! My name is [Your Name] from MO-WEBCO, a Calgary web design company. Is the owner available for two quick minutes? I visited the Graceful Nails Beauty website and noticed some things I wanted to flag.",
+    pitch:"So Graceful Nails Beauty offers nails, lashes, nano-blading, waxing — really impressive range. But your website has some issues that are hurting you. Your gallery images aren't loading at all — visitors just see blank spaces where your work should be. And GoDaddy's own placeholder account — filler at godaddy dot com — is still showing as a logged in user on your site. For a salon doing premium services like nano-blading, your website should be showcasing your work loudly. Right now it's actually hiding it.",
+    offer:"Morolake builds proper custom websites for Calgary nail salons starting from $400 — your work showing beautifully, no GoDaddy placeholders, fully mobile friendly. Delivered in 7 days.",
+    close:"Can she send a free quote by email or DM on Instagram?",
+    objections:[
+      {q:"We didn't know the images weren't loading", a:"It happens with GoDaddy sites quite often! The images look fine when you're logged in editing but broken to visitors. Morolake can start fresh and build something that works properly everywhere. Want a quote?"},
+      {q:"We can't afford it right now", a:"She starts from $400 split into two $200 payments. Given that your gallery is currently invisible to all your visitors, a working website would probably pay for itself very quickly in new bookings."}
+    ]
+  },
+  {
+    id:19, name:'Barbie Nail & Massage', type:'Nail & Spa', status:'pending',
+    email:'barbienail888@gmail.com', phone:'N/A — email only', platform:'Squarespace',
+    owner:'the owner',
+    opening:"Hi! My name is [Your Name] from MO-WEBCO, a Calgary web design company. Is the owner available for two minutes? I visited the Barbie Nail and Massage website and had some thoughts.",
+    pitch:"I love the combination — nails, RMT massage, reflexology, all in Inglewood. Really unique offering. But the website has a few things costing you bookings. The hero images are AI generated and look quite obviously fake — for a salon doing real premium services, real photos would convert so much better. Your renovation announcement banner is still showing with no end date, so visitors might think you're still closed. And there's no about section so people don't know who they're booking with for RMT services — which is something clients care a lot about.",
+    offer:"Morolake builds proper custom websites for Calgary salons starting from $400 — real photos, clear messaging, no confusion about whether you're open. Delivered in 7 days.",
+    close:"Can she send a free quote and portfolio link by email?",
+    objections:[
+      {q:"We used AI images because we don't have professional photos", a:"That's really common! Morolake can source beautiful free stock images that look real and professional — no photographer needed. It makes a huge difference to how premium the site feels."},
+      {q:"We just had a renovation so the site is out of date", a:"Perfect timing then! A post-renovation website refresh is exactly the right move. Morolake can rebuild it to reflect your new space and get rid of that closed banner. Starts from $400 split into two payments."}
+    ]
+  }
+];
+
+var statuses = {};
+var currentSalon = null;
+var currentFilter = 'all';
+
+function toast(m) {
+  var t = document.getElementById('toast');
+  t.textContent = m; t.classList.add('show');
+  setTimeout(function(){ t.classList.remove('show'); }, 2500);
+}
+
+function updateProgress() {
+  var called = salons.filter(function(s){ return statuses[s.id] && statuses[s.id] !== 'pending'; }).length;
+  document.getElementById('progressEl').textContent = called + '/19 called';
+}
+
+function badgeHtml(s) {
+  var st = statuses[s.id] || 'pending';
+  var map = { pending:['b-pending','Not called'], interested:['b-interested','Interested!'], callback:['b-callback','Call back'], nope:['b-nope','Not interested'], called:['b-called','Called'] };
+  var d = map[st] || map.pending;
+  return '<span class="badge '+d[0]+'">'+d[1]+'</span>';
+}
+
+function renderList() {
+  var q = document.getElementById('srch').value.toLowerCase();
+  var filters = ['all','pending','interested','callback','nope'];
+  var labels = {all:'All',pending:'Not called',interested:'Interested',callback:'Call back',nope:'Not interested'};
+  document.getElementById('filterRow').innerHTML = filters.map(function(f){
+    return '<button class="chip'+(currentFilter===f?' on':'')+'" onclick="setFilter(\''+f+'\')">'+(labels[f])+'</button>';
+  }).join('');
+
+  var list = salons.filter(function(s){
+    var mq = !q || s.name.toLowerCase().indexOf(q)>-1 || s.type.toLowerCase().indexOf(q)>-1;
+    var st = statuses[s.id] || 'pending';
+    var mf = currentFilter==='all' || st===currentFilter;
+    return mq && mf;
+  });
+
+  var el = document.getElementById('salonList');
+  if(list.length===0){ el.innerHTML='<div style="text-align:center;padding:2rem;color:var(--tl);font-size:14px;">No salons found</div>'; return; }
+  el.innerHTML = list.map(function(s){
+    return '<div class="salon-card" onclick="openScript('+s.id+')">'
+    +'<div class="salon-card-top"><div><div class="salon-name">'+s.name+'</div><div class="salon-type">'+s.type+' · '+s.platform+'</div></div>'+badgeHtml(s)+'</div>'
+    +'<div class="salon-contact">'+s.email+' · '+s.phone+'</div>'
+    +'</div>';
+  }).join('');
+}
+
+function setFilter(f) { currentFilter=f; renderList(); }
+
+function openScript(id) {
+  var s = salons.find(function(x){ return x.id===id; });
+  if(!s) return;
+  currentSalon = s;
+  document.getElementById('sv-name').textContent = s.name;
+  document.getElementById('sv-type').textContent = s.type + ' · ' + s.platform;
+  document.getElementById('sv-contact').innerHTML = '📧 ' + s.email + '<br>📞 ' + s.phone;
+  document.getElementById('sv-body').innerHTML =
+    section('Opening line','Say this to get through to the owner',[s.opening], [], "Ask for "+s.owner+" by name if possible.")
+    + section('The pitch','Once you have the owner on the line',[s.pitch], [], "Be warm and confident. Pause after the pitch — let them react.")
+    + section('Your offer','Follow with this',[s.offer], [], "")
+    + section('The close','Always end with a clear next step',[s.close], [], "If they say yes — get their email address, confirm it back, say Morolake will be in touch within the hour.")
+    + objSection(s.objections);
+  document.getElementById('listView').style.display='none';
+  document.getElementById('scriptView').style.display='flex';
+  document.getElementById('scriptView').style.flexDirection='column';
+  document.getElementById('scriptView').style.height='100%';
+  document.getElementById('appBody').scrollTop=0;
+  if(!statuses[id]) { statuses[id]='called'; updateProgress(); }
+}
+
+function section(title, sub, lines, obj, note) {
+  return '<div class="script-section">'
+    +'<div class="script-section-hdr">'+title+'</div>'
+    +'<div class="script-section-body">'
+    +(sub?'<p style="font-size:11px;color:var(--tl);margin-bottom:8px;">'+sub+'</p>':'')
+    +lines.map(function(l){ return '<div class="script-line">'+l+'</div>'; }).join('')
+    +(note?'<p class="script-note">'+note+'</p>':'')
+    +'</div></div>';
+}
+
+function objSection(objs) {
+  if(!objs||!objs.length) return '';
+  return '<div class="script-section">'
+    +'<div class="script-section-hdr">Common objections</div>'
+    +'<div class="script-section-body">'
+    +objs.map(function(o){
+      return '<div class="objection"><div class="obj-q">"'+o.q+'"</div><div class="obj-a">'+o.a+'</div></div>';
+    }).join('')
+    +'</div></div>';
+}
+
+function goBack() {
+  document.getElementById('scriptView').style.display='none';
+  document.getElementById('listView').style.display='block';
+  currentSalon=null;
+  renderList();
+  updateProgress();
+}
+
+function setStatus(st) {
+  if(!currentSalon) return;
+  statuses[currentSalon.id]=st;
+  toast(st==='interested'?'Marked as interested! 🦋':st==='callback'?'Call back noted!':'Marked as not interested');
+  updateProgress();
+}
+
+renderList();
+updateProgress();
+</script>
+</body>
+</html>
