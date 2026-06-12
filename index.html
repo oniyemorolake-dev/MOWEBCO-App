@@ -18,6 +18,8 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--cr);font-famil
 .logo{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:600;color:var(--ld);}
 .hdr-sub{font-size:11px;color:var(--tl);margin-top:2px;}
 .hdr-badge{background:var(--ll);color:var(--ld);font-size:10px;font-weight:500;padding:4px 10px;border-radius:20px;}
+.sync-bar{background:rgba(200,168,233,0.15);padding:6px 20px;font-size:10px;color:var(--tl);display:flex;align-items:center;justify-content:space-between;border-bottom:0.5px solid rgba(200,168,233,0.2);}
+.sync-btn{background:var(--ld);color:#fff;border:none;padding:3px 10px;border-radius:10px;font-size:10px;cursor:pointer;font-family:'DM Sans',sans-serif;}
 .body{flex:1;overflow-y:auto;padding:16px;-webkit-overflow-scrolling:touch;}
 .bnav{background:var(--w);border-top:0.5px solid rgba(200,168,233,0.3);display:flex;flex-shrink:0;padding-bottom:env(safe-area-inset-bottom);}
 .ni{flex:1;padding:12px 4px 10px;text-align:center;cursor:pointer;}
@@ -94,6 +96,10 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--cr);font-famil
       <div><div class="logo">MO-WEBCO 🦋</div><div class="hdr-sub">Outreach tracker</div></div>
       <div class="hdr-badge" id="hbadge">0 leads</div>
     </div>
+  </div>
+  <div class="sync-bar">
+    <span id="syncStatus">Local only</span>
+    <button class="sync-btn" onclick="syncNow()">Sync now</button>
   </div>
 
   <div class="body" id="appBody">

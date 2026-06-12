@@ -1,4 +1,6 @@
-var leads = JSON.parse(localStorage.getItem('mo-leads') || '[]');
+var LEADS_KEY = 'mo-leads';
+var LOCAL_BACKUP_KEY = 'mo-leads-local';
+var leads = JSON.parse(localStorage.getItem(LEADS_KEY) || localStorage.getItem(LOCAL_BACKUP_KEY) || '[]');
 var eid = null;
 var filt = 'all';
 var genEmail = '';
@@ -6,7 +8,84 @@ var akey = localStorage.getItem('mo-akey') || '';
 
 function td() { return new Date().toISOString().split('T')[0]; }
 function fd() { var d = new Date(); d.setDate(d.getDate()+4); return d.toISOString().split('T')[0]; }
-function save() { localStorage.setItem('mo-leads', JSON.stringify(leads)); }
+
+function syncReady() {
+  return typeof window !== 'undefined'
+    && window.storage
+    && typeof window.storage.get === 'function'
+    && typeof window.storage.set === 'function';
+}
+
+function setSyncStatus(msg) {
+  var el = document.getElementById('syncStatus');
+  if(el) el.textContent = msg;
+}
+
+function saveLocal() {
+  var raw = JSON.stringify(leads);
+  localStorage.setItem(LEADS_KEY, raw);
+  localStorage.setItem(LOCAL_BACKUP_KEY, raw);
+}
+
+function stamp() {
+  var now = new Date();
+  return now.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
+}
+
+function loadFromShared() {
+  if(!syncReady()) {
+    setSyncStatus('Local only');
+    return Promise.resolve(false);
+  }
+
+  return window.storage.get(LEADS_KEY, true)
+    .then(function(result){
+      if(result && result.value) {
+        var parsed = JSON.parse(result.value);
+        if(Array.isArray(parsed)) {
+          leads = parsed;
+          saveLocal();
+          renderDash();
+          if(document.getElementById('s-all').classList.contains('on')) renderAll();
+        }
+      }
+      setSyncStatus('Synced ' + stamp());
+      return true;
+    })
+    .catch(function(){
+      setSyncStatus('Saved locally (sync failed)');
+      return false;
+    });
+}
+
+function pushToShared() {
+  if(!syncReady()) {
+    setSyncStatus('Local only');
+    return Promise.resolve(false);
+  }
+
+  return window.storage.set(LEADS_KEY, JSON.stringify(leads), true)
+    .then(function(){
+      setSyncStatus('Synced ' + stamp());
+      return true;
+    })
+    .catch(function(){
+      setSyncStatus('Saved locally (sync failed)');
+      return false;
+    });
+}
+
+function save() {
+  saveLocal();
+  pushToShared();
+}
+
+function syncNow() {
+  setSyncStatus('Syncing...');
+  loadFromShared().then(function(ok){
+    if(ok) toast('Synced! 🦋');
+  });
+}
 
 function toast(m) {
   var t = document.getElementById('toast');
@@ -259,4 +338,9 @@ function doCopy() {
 
 clearForm();
 renderDash();
+setSyncStatus(syncReady() ? 'Syncing...' : 'Local only');
+loadFromShared();
+if(syncReady()) {
+  setInterval(function(){ loadFromShared(); }, 30000);
+}
 if(!akey) setTimeout(showKeySetup, 800);

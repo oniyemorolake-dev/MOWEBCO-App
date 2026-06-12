@@ -69,8 +69,8 @@ html,body{height:100%;background:#1a1a2e;display:flex;justify-content:center;ali
 <div class="app">
   <div class="hdr">
     <div class="hdr-row">
-      <div><div class="logo">MO-WEBCO 🦋</div><div class="hdr-sub" id="hdrSub">Call scripts · 19 salons</div></div>
-      <div class="progress" id="progressEl">0/19 called</div>
+      <div><div class="logo">MO-WEBCO 🦋</div><div class="hdr-sub" id="hdrSub">Call scripts</div></div>
+      <div class="progress" id="progressEl">0 called</div>
     </div>
   </div>
 
@@ -350,12 +350,42 @@ var salons = [
       {q:"We used AI images because we don't have professional photos", a:"That's really common! Morolake can source beautiful free stock images that look real and professional — no photographer needed. It makes a huge difference to how premium the site feels."},
       {q:"We just had a renovation so the site is out of date", a:"Perfect timing then! A post-renovation website refresh is exactly the right move. Morolake can rebuild it to reflect your new space and get rid of that closed banner. Starts from $400 split into two payments."}
     ]
+  },
+  {
+    id:20, name:'Baiza Hair Salon', type:'Hair Salon', status:'pending',
+    email:'yene122009@hotmail.com', phone:'403-984-9066', platform:'No website - ChairBot only',
+    owner:'Askal',
+    opening:"Hi! Could I speak with Askal please? My name is [Your Name] and I'm calling on behalf of MO-WEBCO, a local Calgary web design company. I had a look for Baiza Hair Salon online and wanted to reach out.",
+    pitch:"Hi Askal! I found Baiza Hair Salon on Fresha and was genuinely blown away - 434 five star reviews, years of loyal clients, braids and extensions people absolutely rave about. You've clearly built something incredibly special downtown. But here's the thing - you don't have a real website. Just a booking page. That means when people search 'hair salon Calgary' or 'braids Calgary' on Google, Baiza doesn't show up properly. You're losing brand new clients every single day to salons with less talent but a better online presence.",
+    offer:"Morolake builds custom websites for Calgary salons starting from $400 - with your services, your story, your 434 reviews front and centre, and a proper booking form so new clients can find you and book you directly on Google. Delivered in 7 days.",
+    close:"Can she send you a link to her portfolio and a free quote by email? No obligation at all - just so you can see what's possible for Baiza.",
+    objections:[
+      {q:"We already have ChairBot for bookings", a:"ChairBot is great for managing existing clients! But it doesn't help new clients find you on Google. A proper website works alongside ChairBot - new clients find you online, click through, and book. You'd get the best of both."},
+      {q:"We're too busy to deal with a new website", a:"That's exactly why Morolake does everything - you just send her your info and she handles it all. You don't have to do anything except approve the final result. Takes about 30 minutes of your time total."},
+      {q:"How much does it cost", a:"Starts from $400 split into two $200 payments - so just $200 to get started. For a salon with 434 reviews that's a tiny investment that could bring in dozens of new clients."}
+    ]
   }
 ];
 
-var statuses = {};
+var STATUS_KEY = 'mo-call-statuses';
+var statuses = loadStatuses();
 var currentSalon = null;
 var currentFilter = 'all';
+
+function loadStatuses() {
+  try {
+    var raw = localStorage.getItem(STATUS_KEY);
+    if(!raw) return {};
+    var parsed = JSON.parse(raw);
+    return parsed && typeof parsed === 'object' ? parsed : {};
+  } catch(e) {
+    return {};
+  }
+}
+
+function saveStatuses() {
+  localStorage.setItem(STATUS_KEY, JSON.stringify(statuses));
+}
 
 function toast(m) {
   var t = document.getElementById('toast');
@@ -365,7 +395,9 @@ function toast(m) {
 
 function updateProgress() {
   var called = salons.filter(function(s){ return statuses[s.id] && statuses[s.id] !== 'pending'; }).length;
-  document.getElementById('progressEl').textContent = called + '/19 called';
+  var total = salons.length;
+  document.getElementById('progressEl').textContent = called + '/' + total + ' called';
+  document.getElementById('hdrSub').textContent = 'Call scripts · ' + total + ' salons';
 }
 
 function badgeHtml(s) {
@@ -420,7 +452,11 @@ function openScript(id) {
   document.getElementById('scriptView').style.flexDirection='column';
   document.getElementById('scriptView').style.height='100%';
   document.getElementById('appBody').scrollTop=0;
-  if(!statuses[id]) { statuses[id]='called'; updateProgress(); }
+  if(!statuses[id]) {
+    statuses[id]='called';
+    saveStatuses();
+    updateProgress();
+  }
 }
 
 function section(title, sub, lines, obj, note) {
@@ -455,6 +491,7 @@ function goBack() {
 function setStatus(st) {
   if(!currentSalon) return;
   statuses[currentSalon.id]=st;
+  saveStatuses();
   toast(st==='interested'?'Marked as interested! 🦋':st==='callback'?'Call back noted!':'Marked as not interested');
   updateProgress();
 }
